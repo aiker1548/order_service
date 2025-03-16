@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pydantic
+motor          # Для работы с MongoDB асинхронно
+aiohttp         # Для асинхронных запросов (если нужны)
+python-dotenv  # Для работы с переменными окружения из .env
+celery          # Для асинхронных задач
+redis           # Для работы с Redis в Celery
+loguru          # Для логирования
+pydantic_settings
+httpx

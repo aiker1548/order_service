@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - "27017:27017"       # Открытие порта MongoDB
+    volumes:
+      - mongo-data:/data/db  # Подключение тома для хранения данных
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin  # Пользователь root
+      - MONGO_INITDB_ROOT_PASSWORD=secret  # Пароль root
+
+volumes:
+  mongo-data:   # Определение тома для хранения данных MongoDB
