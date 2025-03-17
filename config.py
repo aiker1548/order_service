@@ -10,6 +10,10 @@ class Settings(BaseSettings):
     APP_HOST: str = "127.0.0.1"
     APP_PORT: int = 8000
     APP_DEBUG: bool = True  # Включить отладку (для разработки)
+    
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "your_secret_key_here")  # Используй более безопасный ключ в продакшн
+    ALGORITHM: str = "HS256"  # Алгоритм для JWT (если решишь использовать)
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30  # Время жизни токена
 
     # Настройки для безопасности
     SECRET_KEY: str = os.getenv("SECRET_KEY", "your_secret_key_here")  # Используй более безопасный ключ в продакшн
