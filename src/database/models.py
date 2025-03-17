@@ -38,3 +38,4 @@ class Order(OrderBase):
     status: OrderStatus
     created_at: datetime
     updated_at: Optional[datetime] = None
+    executor_id: Optional[int] = None  # ID исполнителя
