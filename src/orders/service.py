@@ -6,26 +6,37 @@ import httpx
 from starlette.requests import Request
 
 from src.database.models import OrderStatus, Order, OrderCreate
+from src.auth import verify_access_token
 
 # Проверка пользователя через HTTP
 
-async def verify_user(request: Request):
+# async def verify_user(request: Request):
+#     token = request.headers.get("Authorization")
+#     if not token:
+#         raise HTTPException(status_code=401, detail="Authorization token is missing")
+
+#     async with httpx.AsyncClient() as client:
+#         response = await client.get(
+#             "http://localhost:8000/users/me/",
+#             headers={"Authorization": token}
+#         )
+
+#     if response.status_code == 200:
+#         return response.json()
+#     elif response.status_code == 404:
+#         raise HTTPException(status_code=404, detail="User not found")
+#     else:
+#         raise HTTPException(status_code=500, detail="Error verifying user")
+
+def verify_user(request: Request):
     token = request.headers.get("Authorization")
-    if not token:
+    if token and token.startswith('Bearer'):
+            token = token.split("Bearer ")[-1].strip()
+            payload = verify_access_token(token)
+    else:
         raise HTTPException(status_code=401, detail="Authorization token is missing")
 
-    async with httpx.AsyncClient() as client:
-        response = await client.get(
-            "http://localhost:8000/users/me/",
-            headers={"Authorization": token}
-        )
-
-    if response.status_code == 200:
-        return response.json()
-    elif response.status_code == 404:
-        raise HTTPException(status_code=404, detail="User not found")
-    else:
-        raise HTTPException(status_code=500, detail="Error verifying user")
+    return payload
 
 # Создание заказа
 async def create_order(db, order_data: Order, current_user) -> Order:
@@ -34,7 +45,7 @@ async def create_order(db, order_data: Order, current_user) -> Order:
     new_order = OrderCreate(
         title=order_data.title,
         price=order_data.price,
-        creator_id=current_user['id'],
+        creator_id=current_user['user_id'],
         details=order_data.details,
         status=OrderStatus.OPEN,  
         created_at=datetime.utcnow(),
@@ -53,7 +64,6 @@ async def get_open_orders(db) -> list[Order]:
 
 # Взятие заказа на выполнение
 async def take_order(db, order_id: str, executor_id: str) -> Order:
-    await verify_user(executor_id)
 
     order = await db.orders.find_one({"_id": ObjectId(order_id)})
     if not order:
@@ -91,3 +101,9 @@ async def complete_order(db, order_id: str, executor_id: str) -> Order:
 
     updated_order["id"] = str(order_id)
     return Order(**updated_order)
+
+async def get_my_taken_orders(db, executor_id: int) -> list[Order]:
+    orders = await db.orders.find({"executor_id": executor_id}).to_list(length=100)
+    if not orders:
+        return []
+    return [Order(**order) for order in orders]
