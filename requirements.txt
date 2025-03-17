@@ -9,3 +9,4 @@ redis           # Для работы с Redis в Celery
 loguru          # Для логирования
 pydantic_settings
 httpx
+pyjwt 
