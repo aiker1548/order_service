@@ -26,6 +26,16 @@ class Settings(BaseSettings):
     # Настройки для мидлвар
     MAX_REQUEST_SIZE: int = 10485760  # 10MB, если нужно ограничить размер запроса
 
+    #Настройка kafka
+    bootstrap_servers: str = "localhost:9093"
+    group_id: str = "my-group"
+    auto_offset_reset: str = "earliest"
+    enable_auto_commit: bool = True
+    auto_commit_interval_ms: int = 5000
+    max_poll_records: int = 500
+    request_topic: str = "user_info_request"
+    response_topic: str = "user_info_response"
+
     class Config:
         env_file = ".env"  # Путь к файлу .env
 
