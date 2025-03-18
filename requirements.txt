@@ -10,3 +10,4 @@ loguru          # Для логирования
 pydantic_settings
 httpx
 pyjwt 
+aiokafka
