@@ -106,4 +106,9 @@ async def get_my_taken_orders(db, executor_id: int) -> list[Order]:
     orders = await db.orders.find({"executor_id": executor_id}).to_list(length=100)
     if not orders:
         return []
+    # Преобразуем _id в id, если оно присутствует
+    for order in orders:
+        order["id"] = str(order["_id"])  # Здесь мы просто переводим _id в строку и сохраняем в id
+        del order["_id"]  # Удаляем старое поле _id
+        
     return [Order(**order) for order in orders]
